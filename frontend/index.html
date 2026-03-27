@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ikemen AI Patcher v0.5</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo">⚡</div>
+                <div>
+                    <h1>Ikemen AI Patcher</h1>
+                    <span class="version">V0.5 — Boss-Level AI Generator</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn active" data-panel="select">Select</button>
+                <button class="nav-btn" data-panel="analysis" disabled>Analysis</button>
+                <button class="nav-btn" data-panel="styles" disabled>Styles</button>
+                <button class="nav-btn" data-panel="patch" disabled>Patch</button>
+                <button class="nav-btn" data-panel="report" disabled>Report</button>
+                <button class="nav-btn" data-panel="about">About</button>
+            </nav>
+        </header>
+
+        <!-- Panel: Character Selection -->
+        <section id="panel-select" class="panel active">
+            <div class="panel-content center-content">
+                <div class="select-card glass-card">
+                    <div class="select-icon">📂</div>
+                    <h2>Select Character Folder</h2>
+                    <p>Choose a character directory containing .cmd, .cns, .st files</p>
+                    <button id="btn-select" class="btn btn-primary btn-lg" onclick="selectCharacter()">
+                        <span class="btn-icon">📁</span> Browse Folder
+                    </button>
+                    <div id="selected-path" class="selected-path hidden">
+                        <span class="path-label">Selected:</span>
+                        <span class="path-value" id="path-display"></span>
+                    </div>
+                    <button id="btn-analyze" class="btn btn-accent hidden" onclick="analyzeCharacter()">
+                        <span class="btn-icon">🔍</span> Analyze Character
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel: Analysis Dashboard -->
+        <section id="panel-analysis" class="panel">
+            <div class="panel-content">
+                <div class="panel-header">
+                    <h2 id="char-name">Character Analysis</h2>
+                    <span class="badge" id="total-states">0 states</span>
+                </div>
+                <div class="dashboard-grid">
+                    <!-- States Card -->
+                    <div class="glass-card card-states">
+                        <h3>📋 Move States</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Normals</span>
+                            <span class="stat-value" id="stat-normals">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Specials</span>
+                            <span class="stat-value" id="stat-specials">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Hypers</span>
+                            <span class="stat-value" id="stat-hypers">—</span>
+                        </div>
+                        <div class="state-ids" id="normal-ids"></div>
+                    </div>
+
+                    <!-- Combos Card -->
+                    <div class="glass-card card-combos">
+                        <h3>🔗 Combo Chains</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Chains Found</span>
+                            <span class="stat-value" id="stat-chains">—</span>
+                        </div>
+                        <ul class="chain-list" id="chain-list"></ul>
+                    </div>
+
+                    <!-- Variables Card -->
+                    <div class="glass-card card-vars" style="grid-row: span 2;">
+                        <h3>📊 Variables</h3>
+                        
+                        <div class="stat-row">
+                            <span class="stat-label">Unused Var()</span>
+                            <span class="stat-value accent" id="stat-unused-vars" style="font-size: 0.8em; text-align: right; max-width: 60%; word-wrap: break-word;">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Unused Fvar()</span>
+                            <span class="stat-value accent" id="stat-unused-fvars" style="font-size: 0.8em; text-align: right; max-width: 60%; word-wrap: break-word;">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Unused Sysvar()</span>
+                            <span class="stat-value accent" id="stat-unused-sysvars" style="font-size: 0.8em; text-align: right; max-width: 60%; word-wrap: break-word;">—</span>
+                        </div>
+                        
+                        <h4 style="margin-top: 15px; font-size: 0.9em; color: var(--text-secondary)">Variable Usage Profiles</h4>
+                        <div class="var-usage-list" id="var-usages" style="max-height: 200px; overflow-y: auto; font-size: 0.8em; margin-top: 5px;"></div>
+                    </div>
+
+                    <!-- Risk Card -->
+                    <div class="glass-card card-risk">
+                        <h3>⚠️ Risk Analysis</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Risk States</span>
+                            <span class="stat-value" id="stat-risks">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Validation</span>
+                            <span class="stat-value" id="stat-valid">—</span>
+                        </div>
+                        <ul class="risk-list" id="risk-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel: AI Styles -->
+        <section id="panel-styles" class="panel">
+            <div class="panel-content">
+                <div class="panel-header">
+                    <h2>🎨 AI Styles</h2>
+                    <button class="btn btn-sm" onclick="loadStyles()">↻ Refresh</button>
+                </div>
+                <div class="styles-grid" id="styles-grid">
+                    <div class="glass-card style-empty">
+                        <p>Loading styles...</p>
+                    </div>
+                </div>
+                <div id="style-preview" class="glass-card hidden">
+                    <h3>Style Preview</h3>
+                    <pre id="style-preview-content"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel: Patch Configuration -->
+        <section id="panel-patch" class="panel">
+            <div class="panel-content">
+                <div class="panel-header">
+                    <h2>⚙️ Patch Configuration</h2>
+                </div>
+                <div class="patch-grid">
+                    <div class="glass-card">
+                        <h3>Selected Style</h3>
+                        <div class="current-style" id="current-style">
+                            <span class="style-badge">Auto-Generated</span>
+                            <p>Default boss-level AI will be auto-generated based on character analysis</p>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <h3>Options</h3>
+                        <div class="option-row">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="opt-antispam" checked>
+                                <span class="toggle-switch"></span>
+                                Anti-Spam Cooldown
+                            </label>
+                        </div>
+                        <div class="option-row">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="opt-boss" checked>
+                                <span class="toggle-switch"></span>
+                                Boss Mode (aggressive)
+                            </label>
+                        </div>
+                        <div class="option-row">
+                            <label class="slider-label">
+                                Randomness
+                                <span class="slider-value" id="rand-value">50%</span>
+                            </label>
+                            <input type="range" id="opt-randomness" min="0" max="100" value="50" class="slider" oninput="updateSlider()">
+                        </div>
+                    </div>
+                    <div class="glass-card patch-action">
+                        <div id="patch-status" class="patch-status hidden"></div>
+                        <button id="btn-patch" class="btn btn-primary btn-lg btn-full" onclick="applyPatch()">
+                            <span class="btn-icon">🤖</span> Patch AI
+                        </button>
+                        <div id="patch-result" class="patch-result hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel: Report Viewer -->
+        <section id="panel-report" class="panel">
+            <div class="panel-content">
+                <div class="panel-header">
+                    <h2>📄 AI Report</h2>
+                    <button class="btn btn-sm" onclick="generateReport()">↻ Regenerate</button>
+                </div>
+                <div class="glass-card report-viewer">
+                    <pre id="report-content">Click "Regenerate" to generate the AI report.</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Panel: About -->
+        <section id="panel-about" class="panel">
+            <div class="panel-content center-content">
+                <div class="glass-card about-card" id="about-container" style="text-align: left; padding: 30px; max-width: 500px; margin: 0 auto;">
+                    <h2>ℹ️ Loading About...</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <span id="loading-text">Processing...</span>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "ikemen-ai-patcher",
+  "outputfilename": "ikemen-ai-patcher",
+  "frontend:install": "",
+  "frontend:build": "",
+  "frontend:dev:watcher": "",
+  "frontend:dev:serverUrl": "",
+  "author": {
+    "name": "AI Patcher",
+    "email": ""
+  },
+  "info": {
+    "companyName": "Ikemen AI Patcher",
+    "productName": "Ikemen AI Patcher",
+    "productVersion": "2.0.0",
+    "copyright": "2026",
+    "comments": "Boss-Level AI Generator for Ikemen GO Characters"
+  }
+}

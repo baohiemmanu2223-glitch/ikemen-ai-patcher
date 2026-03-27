@@ -1,0 +1,49 @@
+; AI STYLE: BOSS_HYBRID
+; DESCRIPTION: Highly adaptive, reads inputs via memory AI, punishes mistakes perfectly, controls space.
+; MID_MATCH_SWITCH: true
+; VAR: aggression = 95
+
+[Function AI_Decision]
+strategy = "defense"
+label = "Perfect Invincible Reversal"
+trigger1 = EnemyNear, MoveType = A
+trigger1 = EnemyNear, AnimTime < -10
+trigger1 = P2BodyDist X < 60
+value = @reversal
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Perfect Anti-Air"
+trigger1 = P2StateType = A
+trigger1 = P2Dist Y < -40
+trigger1 = P2BodyDist X < 80
+value = @antiair
+
+[Function AI_Decision]
+strategy = "combo"
+label = "Hit Confirm into Launcher"
+trigger1 = MoveHit = 1
+value = @launcher
+
+[Function AI_Decision]
+strategy = "mixup"
+label = "Overhead Predictor"
+trigger1 = P2BodyDist X < 60
+trigger1 = P2StateType = C || EnemyNear, MoveType = G
+random = 200
+value = @overhead
+
+[Function AI_Decision]
+strategy = "mixup"
+label = "Low Sweep Auto-Punish"
+trigger1 = EnemyNear, MoveType = A && P2BodyDist X > 50
+trigger1 = EnemyNear, AnimTime < -5
+value = @low
+
+[Function AI_Decision]
+strategy = "neutral"
+label = "Boss Zoning"
+trigger1 = P2BodyDist X > 150
+trigger1 = NumProj = 0
+cooldown = 20
+value = @projectile

@@ -1,0 +1,41 @@
+; AI STYLE: ZONING_KEEPAWAY
+; DESCRIPTION: Controls space keeping the opponent at full screen using projectiles and anti-airs.
+; VAR: aggression = 20
+
+[Function AI_Decision]
+strategy = "defense"
+label = "Reversal When Cornered"
+trigger1 = BackEdgeDist < 50
+trigger1 = EnemyNear, MoveType = A
+trigger1 = P2BodyDist X < 60
+value = @reversal
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Anti-Air Jumpers"
+trigger1 = P2StateType = A
+trigger1 = P2BodyDist X < 100
+value = @antiair
+
+[Function AI_Decision]
+strategy = "neutral"
+label = "Full Screen Projectile Spam"
+trigger1 = P2BodyDist X > 140
+trigger1 = NumProj = 0
+cooldown = 30
+value = @projectile
+
+[Function AI_Decision]
+strategy = "defense"
+label = "Retreat Dash"
+trigger1 = P2BodyDist X < 80
+trigger1 = BackEdgeDist > 100
+random = 400
+value = @dash
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Keep-away Sweep"
+trigger1 = P2BodyDist X = [60, 90]
+trigger1 = EnemyNear, MoveType != A
+value = @low

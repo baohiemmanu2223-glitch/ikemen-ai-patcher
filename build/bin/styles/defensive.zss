@@ -1,0 +1,33 @@
+; AI STYLE: DEFENSIVE_REACTIVE
+; DESCRIPTION: Turtles up, reacts to attacks with reversals, and waits for perfect counter opportunities.
+; VAR: aggression = 10
+
+[Function AI_Decision]
+strategy = "defense"
+label = "Wakeup / Corner Reversal"
+trigger1 = StateType = L || BackEdgeDist < 30
+trigger1 = EnemyNear, MoveType = A
+value = @reversal
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Anti-Air Reaction"
+trigger1 = P2StateType = A
+trigger1 = P2Dist Y < -40
+value = @antiair
+
+[Function AI_Decision]
+strategy = "defense"
+label = "Retreating Projectile"
+trigger1 = P2BodyDist X > 120
+trigger1 = NumProj = 0
+cooldown = 40
+value = @projectile
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Post-Guard Punish Sweep"
+trigger1 = StateNo = [150,155]
+trigger1 = ctrl
+trigger1 = EnemyNear, MoveType != A
+value = @low

@@ -1,0 +1,34 @@
+; AI STYLE: FOOTSIES_NEUTRAL
+; DESCRIPTION: Uses long-range normals, waits for whiffs, and controls the mid-range space.
+; VAR: aggression = 50
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Whiff Punish Sweep"
+trigger1 = EnemyNear, MoveType = A
+trigger1 = EnemyNear, AnimTime < -5
+trigger1 = P2BodyDist X = [50, 90]
+value = @low
+
+[Function AI_Decision]
+strategy = "neutral"
+label = "Poke from Mid-Range"
+trigger1 = P2BodyDist X = [60, 100]
+trigger1 = P2StateType != A
+random = 300
+value = @low
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Anti-Air Check"
+trigger1 = P2StateType = A
+trigger1 = P2BodyDist X < 90
+value = @antiair
+
+[Function AI_Decision]
+strategy = "defense"
+label = "Retreat Check"
+trigger1 = P2BodyDist X < 40
+trigger1 = EnemyNear, StateType = S
+random = 600
+value = @dash

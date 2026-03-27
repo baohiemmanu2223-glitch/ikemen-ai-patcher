@@ -1,0 +1,33 @@
+; AI STYLE: GRAPPLER
+; DESCRIPTION: Focuses on closing the gap to land command grabs and devastating close-range punishes.
+; VAR: aggression = 70
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Tick Throw Setup"
+trigger1 = MoveGuarded
+trigger1 = P2BodyDist X < 40
+random = 200
+value = @grab
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Punish Airborne with Reversal/AntiAir"
+trigger1 = P2StateType = A
+trigger1 = P2Dist Y < -50
+value = @antiair
+
+[Function AI_Decision]
+strategy = "movement"
+label = "Constantly Dash Forward"
+trigger1 = P2BodyDist X > 80
+trigger1 = EnemyNear, StateType != A
+value = @dash
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Raw Command Grab punish"
+trigger1 = EnemyNear, StateType != A
+trigger1 = P2BodyDist X < 30
+trigger1 = EnemyNear, MoveType != A
+valume = @grab

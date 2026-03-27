@@ -1,0 +1,41 @@
+; AI STYLE: MIXUP_UNPREDICTABLE
+; DESCRIPTION: Utilizes 50/50s, cross-ups, overheads, and lows to constantly trick the opponent.
+; VAR: aggression = 80
+
+[Function AI_Decision]
+strategy = "mixup"
+label = "Overhead 50/50"
+trigger1 = P2BodyDist X < 50
+trigger1 = P2StateType = C
+random = 400
+value = @overhead
+
+[Function AI_Decision]
+strategy = "mixup"
+label = "Low Sweep 50/50"
+trigger1 = P2BodyDist X < 50
+trigger1 = P2StateType = S
+random = 400
+value = @low
+
+[Function AI_Decision]
+strategy = "combo"
+label = "Surprise Command Grab"
+trigger1 = MoveHit
+trigger1 = P2BodyDist X < 30
+random = 700
+value = @grab
+
+[Function AI_Decision]
+strategy = "movement"
+label = "Dash in for Mixup"
+trigger1 = P2BodyDist X = [60,120]
+random = 500
+value = @dash
+
+[Function AI_Decision]
+strategy = "combo"
+label = "Launch off hits"
+trigger1 = MoveHit = 1
+random = 200
+value = @launcher

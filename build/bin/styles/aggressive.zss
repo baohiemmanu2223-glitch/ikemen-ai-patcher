@@ -1,0 +1,49 @@
+; AI STYLE: AGGRESSIVE_RUSHDOWN
+; DESCRIPTION: Relentless offense, constant forward movement, pressure, and mixups.
+; VAR: aggression = 85
+
+[Function AI_Decision]
+strategy = "defense"
+label = "Invincible Reversal on Wakeup"
+trigger1 = StateType = L || StateNo = [5000, 5120]
+trigger1 = EnemyNear, MoveType = A
+value = @reversal
+
+[Function AI_Decision]
+strategy = "movement"
+label = "Forward Dash to Close Gap"
+trigger1 = P2BodyDist X >= 120
+trigger1 = EnemyNear, StateType != A
+value = @dash
+
+[Function AI_Decision]
+strategy = "punish"
+label = "Anti-Air against jump-ins"
+trigger1 = P2StateType = A
+trigger1 = P2BodyDist X < 80
+trigger1 = P2Dist Y < -40
+value = @antiair
+
+[Function AI_Decision]
+strategy = "mixup"
+label = "Overhead Pressure"
+trigger1 = P2BodyDist X < 60
+trigger1 = P2StateType = C
+random = 400
+value = @overhead
+
+[Function AI_Decision]
+strategy = "mixup"
+label = "Low Sweep Pressure"
+trigger1 = P2BodyDist X < 60
+trigger1 = P2StateType = S
+random = 600
+value = @low
+
+[Function AI_Decision]
+strategy = "combo"
+label = "Combo into Launcher"
+trigger1 = MoveHit = 1
+trigger1 = StateType != A
+random = 500
+value = @launcher

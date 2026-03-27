@@ -1,0 +1,131 @@
+; AI STYLE: BOSS_SMART
+; DESCRIPTION: Adaptive boss — switches between aggressive/defensive mid-match based on health
+; REACTION_DELAY: 3
+; ADAPTIVE: true
+; MID_MATCH_SWITCH: true
+; VAR: behavior = 40
+
+[Function AI_Decision]
+
+; === PUNISH LAYER (always active) ===
+
+; priority 1 — instant punish on whiffed attacks (universal)
+trigger1 = EnemyNear, MoveType = A
+trigger1 = EnemyNear, GetHitVar(HitTime) <= 0
+trigger1 = EnemyNear, AnimTime < -5
+trigger1 = P2BodyDist X < 100
+trigger1 = ctrl
+value = 200
+strategy = punish
+label = "Frame Punish"
+cooldown = 8
+weight = 800
+
+; priority 2 — anti-air punish
+trigger2 = EnemyNear, StateType = A
+trigger2 = EnemyNear, Pos Y < -30
+trigger2 = P2BodyDist X < 120
+trigger2 = ctrl
+value = 430
+strategy = punish
+label = "Anti-Air Upper"
+cooldown = 12
+weight = 750
+
+; === COMBO LAYER ===
+
+; priority 3 — hit confirm into special
+trigger3 = MoveHit
+trigger3 = StateNo = [200, 299]
+value = 1000
+strategy = combo
+label = "Normal -> Special Link"
+cooldown = 5
+weight = 850
+
+; priority 4 — special into super combo
+trigger4 = MoveHit
+trigger4 = StateNo = [1000, 1999]
+trigger4 = Power >= 1000
+value = 3000
+strategy = combo
+label = "Special -> Super Cancel"
+cooldown = 60
+weight = 500
+
+; === OFFENSE LAYER (favored when aggressive) ===
+
+; priority 5 — close range rushdown normal
+trigger5 = P2BodyDist X < 50
+trigger5 = ctrl
+trigger5 = StateType = S
+value = 200
+strategy = neutral
+label = "Close Jab"
+cooldown = 8
+weight = 650
+
+; priority 6 — mid range poke
+trigger6 = P2BodyDist X = [40, 120]
+trigger6 = ctrl
+value = 220
+strategy = neutral
+label = "Spacing Poke"
+cooldown = 10
+weight = 550
+
+; priority 7 — approach with crouching attack
+trigger7 = P2BodyDist X = [30, 80]
+trigger7 = ctrl
+trigger7 = StateType = S
+value = 410
+strategy = neutral
+label = "Low Approach"
+cooldown = 12
+weight = 500
+
+; === DEFENSE LAYER (favored when defensive) ===
+
+; priority 8 — guard on pressure
+trigger8 = InGuardDist
+trigger8 = EnemyNear, MoveType = A
+trigger8 = ctrl
+value = 120
+strategy = defense
+label = "Smart Guard"
+cooldown = 3
+weight = 900
+
+; priority 9 — backdash from close range
+trigger9 = P2BodyDist X < 30
+trigger9 = ctrl
+trigger9 = StateType = S
+value = 105
+strategy = defense
+label = "Emergency Backdash"
+cooldown = 25
+weight = 500
+
+; === RANGED LAYER ===
+
+; priority 10 — zoning special at far range
+trigger10 = P2BodyDist X > 180
+trigger10 = ctrl
+value = 1000
+strategy = neutral
+label = "Far Zoning"
+cooldown = 25
+weight = 450
+
+; === SUPER LAYER ===
+
+; priority 11 — super when opportunity arises
+trigger11 = P2BodyDist X < 180
+trigger11 = Power >= 2000
+trigger11 = EnemyNear, ctrl = 0
+trigger11 = ctrl
+value = 3000
+strategy = punish
+label = "Opportunity Super"
+cooldown = 90
+weight = 350
